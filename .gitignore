@@ -173,3 +173,4 @@ cache/
 # Backup files
 *.bak
 *.backup 
+.early.coverage
