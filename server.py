@@ -69,7 +69,7 @@ except Exception as e:
 
 
 @mcp.tool()
-async def create_repository_and_build_knowledge_graph(repo_path: str, repo_id: str = "") -> dict:
+async def create_repo_with_knowledge_graph(repo_path: str, repo_id: str = "") -> dict:
     """Create or clone a repository and analyze it to build a knowledge graph"""
     try:
         # Generate repo_id if not provided - with better validation
@@ -337,7 +337,7 @@ async def create_relation(repo_id: str, from_uuid: str, to_uuid: str, relation_t
         raise Exception(str(e))
 
 @mcp.tool()
-async def retrieve_multiple_entity_code_snippets(repo_id: str, uuids: List[str]) -> dict:
+async def get_entity_code(repo_id: str, uuids: List[str]) -> dict:
     """Get code and metadata for multiple entities"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -351,7 +351,7 @@ async def retrieve_multiple_entity_code_snippets(repo_id: str, uuids: List[str])
         raise Exception(str(e))
 
 @mcp.tool()
-async def find_entities_by_probable_names(repo_id: str, probable_names: List[str]) -> dict:
+async def find_probable_entities(repo_id: str, probable_names: List[str]) -> dict:
     """Get entities by probable names"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -386,7 +386,7 @@ async def ping() -> dict:
 
 # Repository tools
 
-@mcp.tool("repos://list")
+@mcp.tool()
 async def list_repositories() -> dict:
     """List all available repositories"""
     try:
@@ -396,8 +396,8 @@ async def list_repositories() -> dict:
         logger.error(f"Error listing repositories: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/entities")
-async def retrieve_repository_entity_index(repo_id: str) -> dict:
+@mcp.tool()
+async def get_repo_entities(repo_id: str) -> dict:
     """Get flat index of all entities with filtering and pagination"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -419,8 +419,8 @@ async def retrieve_repository_entity_index(repo_id: str) -> dict:
         logger.error(f"Error getting entities index: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/entity/{entity_uuid}")
-async def retrieve_entity_details(repo_id: str, entity_uuid: str) -> dict:
+@mcp.tool()
+async def get_entity(repo_id: str, entity_uuid: str) -> dict:
     """Get entity details by UUID"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -436,8 +436,8 @@ async def retrieve_entity_details(repo_id: str, entity_uuid: str) -> dict:
         logger.error(f"Error getting entity: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/entity/{entity_uuid}/context")
-async def retrieve_entity_full_context(repo_id: str, entity_uuid: str) -> dict:
+@mcp.tool()
+async def get_entity_context(repo_id: str, entity_uuid: str) -> dict:
     """Get full context for an entity"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -453,8 +453,8 @@ async def retrieve_entity_full_context(repo_id: str, entity_uuid: str) -> dict:
         logger.error(f"Error getting entity context: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/statistics")
-async def calculate_repository_statistics(repo_id: str) -> dict:
+@mcp.tool()
+async def calc_repo_stats(repo_id: str) -> dict:
     """Get comprehensive repository statistics and metrics"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -499,8 +499,8 @@ async def calculate_repository_statistics(repo_id: str) -> dict:
         logger.error(f"Error getting repository statistics: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/entity/{entity_uuid}/neighbors")
-async def find_connected_entity_neighbors(repo_id: str, entity_uuid: str) -> dict:
+@mcp.tool()
+async def get_entity_neighbors(repo_id: str, entity_uuid: str) -> dict:
     """Get neighbor entities"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -522,8 +522,8 @@ async def find_connected_entity_neighbors(repo_id: str, entity_uuid: str) -> dic
 
 # Analytics tools
 
-@mcp.tool("repo://{repo_id}/complexity-analysis")
-async def measure_repository_code_complexity(repo_id: str) -> dict:
+@mcp.tool()
+async def measure_complexity(repo_id: str) -> dict:
     """Analyze repository complexity and patterns"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -567,8 +567,8 @@ async def measure_repository_code_complexity(repo_id: str) -> dict:
         logger.error(f"Error analyzing complexity: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/hotspots")
-async def identify_critical_code_hotspots(repo_id: str) -> dict:
+@mcp.tool()
+async def find_hotspots(repo_id: str) -> dict:
     """Find code hotspots - most important/central code elements"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -624,8 +624,8 @@ async def identify_critical_code_hotspots(repo_id: str) -> dict:
         logger.error(f"Error finding hotspots: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/dependencies")
-async def map_repository_dependencies(repo_id: str) -> dict:
+@mcp.tool()
+async def map_dependencies(repo_id: str) -> dict:
     """Analyze dependency relationships and patterns"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -697,8 +697,8 @@ async def map_repository_dependencies(repo_id: str) -> dict:
         logger.error(f"Error analyzing dependencies: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/impact-analysis/{node_id}")
-async def analyze_node_change_impact(repo_id: str, node_id: str) -> dict:
+@mcp.tool()
+async def analyze_impact(repo_id: str, node_id: str) -> dict:
     """Analyze the impact of changes to a specific node"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -767,8 +767,8 @@ async def analyze_node_change_impact(repo_id: str, node_id: str) -> dict:
         logger.error(f"Error analyzing impact: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/language-analysis")
-async def detect_repository_programming_languages(repo_id: str) -> dict:
+@mcp.tool()
+async def detect_languages(repo_id: str) -> dict:
     """Analyze programming languages used in the repository"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -859,8 +859,8 @@ async def detect_repository_programming_languages(repo_id: str) -> dict:
         logger.error(f"Error analyzing languages: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/code-quality-metrics")
-async def evaluate_repository_code_quality(repo_id: str) -> dict:
+@mcp.tool()
+async def evaluate_quality(repo_id: str) -> dict:
     """Analyze overall code quality metrics"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -945,7 +945,7 @@ async def evaluate_repository_code_quality(repo_id: str) -> dict:
 
 # Search tools
 
-@mcp.tool("repo://{repo_id}/search")
+@mcp.tool()
 async def search_entities(repo_id: str) -> dict:
     """Advanced search with fuzzy matching and filtering"""
     try:
@@ -968,7 +968,7 @@ async def search_entities(repo_id: str) -> dict:
         logger.error(f"Error searching entities: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/relations")
+@mcp.tool()
 async def list_relations(repo_id: str) -> dict:
     """List all relationships with filtering"""
     try:
@@ -993,8 +993,8 @@ async def list_relations(repo_id: str) -> dict:
         logger.error(f"Error listing relations: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/entity/{entity_uuid}/subgraph")
-async def extract_entity_surrounding_subgraph(repo_id: str, entity_uuid: str) -> dict:
+@mcp.tool()
+async def get_entity_subgraph(repo_id: str, entity_uuid: str) -> dict:
     """Get subgraph around an entity"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -1025,8 +1025,8 @@ async def extract_entity_surrounding_subgraph(repo_id: str, entity_uuid: str) ->
         logger.error(f"Error getting subgraph: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/entity/{entity_uuid}/tree")
-async def get_entity_call_inheritance_tree(repo_id: str, entity_uuid: str) -> dict:
+@mcp.tool()
+async def get_entity_tree(repo_id: str, entity_uuid: str) -> dict:
     """Get call or inheritance tree for an entity"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -1039,8 +1039,8 @@ async def get_entity_call_inheritance_tree(repo_id: str, entity_uuid: str) -> di
         logger.error(f"Error getting entity tree: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/audit")
-async def retrieve_repository_audit_log(repo_id: str) -> dict:
+@mcp.tool()
+async def get_repo_audit(repo_id: str) -> dict:
     """Get audit log for repository"""
     try:
         if not await storage.repo_exists(repo_id):
@@ -1053,8 +1053,8 @@ async def retrieve_repository_audit_log(repo_id: str) -> dict:
         logger.error(f"Error getting audit log: {e}")
         raise Exception(str(e))
 
-@mcp.tool("repo://{repo_id}/entity/{entity_uuid}/audit")
-async def retrieve_entity_audit_history(repo_id: str, entity_uuid: str) -> dict:
+@mcp.tool()
+async def get_entity_audit(repo_id: str, entity_uuid: str) -> dict:
     """Get audit events for a specific entity"""
     try:
         if not await storage.repo_exists(repo_id):
